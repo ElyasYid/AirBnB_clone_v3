@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Handles all RESTful API actions for `City`"""
+"""Tis handles of api for city objects"""
 from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
@@ -28,11 +28,11 @@ def cities_in_a_state(state_id):
 @app_views.route("/cities/<city_id>")
 def get_city(city_id):
     """Retrieve a `City`"""
-    city = storage.get(City, city_id)
-    if not city:
+    sty = storage.get(City, city_id)
+    if not sty:
         abort(404)
 
-    return jsonify(city.to_dict())
+    return jsonify(sty.to_dict())
 
 
 @app_views.route("/cities/<city_id>", methods=["DELETE"])
@@ -42,11 +42,11 @@ def delete_city(city_id):
     Args:
         city_id (str): City identifier
     """
-    city = storage.get(City, city_id)
-    if not city:
+    sty = storage.get(City, city_id)
+    if not sty:
         abort(404)
 
-    city.delete()
+    sty.delete()
     storage.save()
 
     return jsonify({}), 200
@@ -59,30 +59,30 @@ def create_city(state_id):
     Args:
         state_id (str): State identifier
     """
-    state = storage.get(State, state_id)
-    if not state:
+    copse = storage.get(State, state_id)
+    if not copse:
         abort(404)
     if not request.get_json():
         abort(400, "Not a JSON")
     if "name" not in request.get_json():
         abort(400, "Missing name")
 
-    city = City(state_id=state_id, **request.get_json())
-    city.save()
+    sty = City(state_id=state_id, **request.get_json())
+    sty.save()
 
-    return jsonify(city.to_dict()), 201
+    return jsonify(sty.to_dict()), 201
 
 
 @app_views.route("/cities/<city_id>", methods=["PUT"])
 def update_city(city_id):
-    city = storage.get(City, city_id)
-    if not city:
+    sty = storage.get(City, city_id)
+    if not sty:
         abort(404)
     if not request.get_json():
         abort(400, "Not a JSON")
 
     key = "name"
-    setattr(city, key, request.get_json().get(key))
-    city.save()
+    setattr(sty, key, request.get_json().get(key))
+    sty.save()
 
-    return jsonify(city.to_dict())
+    return jsonify(sty.to_dict())

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Handles all RESTful API actions for `Amenity`"""
+"""Tis module for api actions of amenities"""
 from api.v1.views import app_views
 from models import storage
 from models.amenity import Amenity
@@ -29,11 +29,11 @@ def get_amenity(amenity_id):
     Returns:
         flask.Response: An amenity in json
     """
-    amenity = storage.get(Amenity, amenity_id)
-    if not amenity:
+    the_amen = storage.get(Amenity, amenity_id)
+    if not the_amen:
         abort(404)
 
-    return jsonify(amenity.to_dict())
+    return jsonify(the_amen.to_dict())
 
 
 @app_views.route("/amenities/<amenity_id>", methods=["DELETE"])
@@ -41,22 +41,22 @@ def delete_amenity(amenity_id):
     """Delete an amenity.
 
     Args:
-        amenity_id (str): The ID of the amenity.
+        amenity_id (str): amenity id
 
     Returns:
         dict: An empty JSON.
 
     Raises:
-        404: If the specified amenity_id does not exist.
+        404: amenity_id does not exist.
     """
-    amenity = storage.get(Amenity, amenity_id)
-    if amenity is None:
+    the_amen = storage.get(Amenity, amenity_id)
+    if the_amen is None:
         abort(404)
 
-    amenity.delete()
+    the_amen.delete()
     storage.save()
 
-    return jsonify({})
+    return jsonify({}), 200
 
 
 @app_views.route("/amenities", methods=["POST"])
@@ -67,8 +67,7 @@ def create_amenity():
         dict: New amenity in JSON
 
     Raises:
-        400: If request body is not a valid JSON
-        400: If the payload does not contain the key `name`
+        400: If notvalid JSON/payload not contain key `name`
     """
     payload = request.get_json()
     if not payload:
@@ -76,23 +75,24 @@ def create_amenity():
     if "name" not in payload:
         abort(400, "Missing name")
 
-    amenity = Amenity(**payload)
-    amenity.save()
+    the_amen = Amenity(**payload)
+    the_amen.save()
 
-    return jsonify(amenity.to_dict())
+    return jsonify(the_amen.to_dict()), 201
 
 
 @app_views.route("/amenities/<amenity_id>", methods=["PUT"])
 def update_amenity(amenity_id):
-    amenity = storage.get(Amenity, amenity_id)
+    """updates amenity based on id"""
+    the_amen = storage.get(Amenity, amenity_id)
     payload = request.get_json()
-    if not amenity:
+    if not the_amen:
         abort(404)
     if not payload:
         abort(400, "Not a JSON")
 
     key = "name"
-    setattr(amenity, key, payload[key])
-    amenity.save()
+    setattr(the_amen, key, payload[key])
+    the_amen.save()
 
-    return jsonify(amenity.to_dict())
+    return jsonify(the_amen.to_dict()), 200
