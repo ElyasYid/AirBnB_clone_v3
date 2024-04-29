@@ -48,7 +48,7 @@ def delete_state(state_id):
         abort(404)
     state.delete()
     storage.save()
-    return jsonify({}), 200
+    return jsonify({})
 
 
 @app_views.route("/states", methods=["POST"])
@@ -81,4 +81,4 @@ def update_state(state_id):
     key = "name"
     setattr(state, key, request.get_json().get(key))
     state.save()
-    return jsonify(state.to_dict()), 200
+    return jsonify(state.to_dict())
