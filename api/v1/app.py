@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-The RESTful api starts here. The api aids data access in the app.
+The RESTful api starts here
 """
 from os import getenv
 
@@ -20,12 +20,13 @@ port = getenv("HBNB_API_PORT", "5000")
 
 @app.teardown_appcontext
 def teardown(exception):
-    """Cleanup operations"""
+    """this is for cleanup"""
     storage.close()
 
 
 @app.errorhandler(404)
 def not_found(error):
+    """this is for not found"""
     return jsonify({"error": "Not found"}), 404
 
 
