@@ -16,12 +16,6 @@ def get_places(city_id):
 
     Args:
         city_id (str): ID of the City
-
-    Returns:
-        list: All the places in that city
-
-    Raises:
-        404: If the specified city_id does not exist
     """
     city = storage.get(City, city_id)
     if not city:
@@ -40,12 +34,6 @@ def get_place(place_id):
 
     Args:
         place_id (str): ID of the place
-
-    Returns:
-        dict: Place JSON
-
-    Raises:
-        404: If the specified place_id does not exist
     """
     place = storage.get(Place, place_id)
     if not place:

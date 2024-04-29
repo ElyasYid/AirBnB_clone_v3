@@ -9,11 +9,7 @@ from flask import jsonify, abort, request
 
 @app_views.route("/amenities")
 def get_amenities():
-    """Retrieve list of all `Amenity` objects
-
-    Returns:
-         List of all the amenities
-    """
+    """Retrieve list of all amenity objects"""
     amenities = storage.all(Amenity)
     alll = []
 
