@@ -8,23 +8,23 @@ from flask import jsonify, abort, request
 
 
 @app_views.route("/amenities")
-def amenities():
+def get_amenities():
     """Retrieve list of all `Amenity` objects
 
     Returns:
-        `flask.Response`: List of all the amenities
+         List of all the amenities
     """
     amenities = storage.all(Amenity)
-    result = []
+    alll = []
 
     for amenity in amenities.values():
-        result.append(amenity.to_dict())
+        alll.append(amenity.to_dict())
 
-    return jsonify(result)
+    return jsonify(alll)
 
 
 @app_views.route("/amenities/<amenity_id>")
-def amenity(amenity_id):
+def get_amenity(amenity_id):
     """Retrieve one `Amenity`
 
     Args:

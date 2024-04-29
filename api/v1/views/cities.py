@@ -18,15 +18,15 @@ def cities_in_a_state(state_id):
     if not state:
         abort(404)
 
-    result = []
+    endd = []
     for city in state.cities:
-        result.append(city.to_dict())
+        endd.append(city.to_dict())
 
-    return jsonify(result)
+    return jsonify(endd)
 
 
 @app_views.route("/cities/<city_id>")
-def city(city_id):
+def get_city(city_id):
     """Retrieve a `City`"""
     city = storage.get(City, city_id)
     if not city:

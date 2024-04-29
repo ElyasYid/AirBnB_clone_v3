@@ -11,7 +11,7 @@ from models.state import State
 
 
 @app_views.route("/cities/<city_id>/places")
-def places(city_id):
+def get_places(city_id):
     """Get all places in a city
 
     Args:
@@ -26,16 +26,16 @@ def places(city_id):
     city = storage.get(City, city_id)
     if not city:
         abort(404)
-    result = []
+    boom = []
 
     for place in city.places:
-        result.append(place.to_dict())
+        boom.append(place.to_dict())
 
-    return jsonify(result)
+    return jsonify(boom)
 
 
 @app_views.route("/places/<place_id>")
-def place(place_id):
+def get_place(place_id):
     """Get a place
 
     Args:
@@ -128,8 +128,6 @@ def update_place(place_id):
     place = storage.get(Place, place_id)
     payload = request.get_json()
     if not place:
-        abort(404)
-    if not payload:
         abort(400, "Not a JSON")
 
     for key, value in place.to_dict().items():
@@ -145,64 +143,3 @@ def update_place(place_id):
     place.save()
 
     return jsonify(place.to_dict())
-
-
-@app_views.route("/places_search", methods=["POST"])
-def search():
-    # If the HTTP request body is not valid JSON
-    guide = request.get_json()
-    if not guide:
-        abort(400, "Not a JSON")
-
-    state_ids = guide.get("states")
-    city_ids = guide.get("cities")
-    amenity_ids = guide.get("amenities")
-    result = []
-
-    # If the JSON body is empty or each list of all keys are empty:
-    # retrieve all Place objects
-    if not guide and not state_ids and not city_ids:
-        result = storage.all(Place)
-
-    # If states list is not empty, results should
-    # include all Place objects for each State id listed
-    if state_ids:
-        for state_id in state_ids:
-            state = storage.get(State, state_id)
-            if state:
-                for city in state.cities:
-                    for place in city.places:
-                        result.append(place)
-
-    # If cities list is not empty, results should
-    # include all Place objects for each City id listed
-    if city_ids:
-        for city_id in city_ids:
-            city = storage.get(City, city_id)
-            if city:
-                for place in city.places:
-                    if place not in result:
-                        result.append(place)
-
-    # If amenities list is not empty, limit search results to
-    # only Place objects having all Amenity ids listed
-    if amenity_ids:
-        for place in result:
-            if place.amenities:
-                place_amenity_ids = [amenity.id for amenity in place.amenities]
-                for amenity_id in amenity_ids:
-                    if amenity_id not in place_amenity_ids:
-                        result.remove(place)
-                        break
-
-    # serialize to json
-    result = [storage.get(Place, place.id).to_dict() for place in result]
-    # remove relationship keys with list comprehension and
-    # dictionary comprehension
-    keys_to_remove = ["amenities", "reviews", "amenity_ids"]
-    result = [
-        {k: v for k, v in place_dict.items() if k not in keys_to_remove}
-        for place_dict in result
-    ]
-
-    return jsonify(result)
